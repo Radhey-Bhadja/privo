@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Privo — Zero-Trace Web Suite by Radhey Bhadja</title>
+  <meta name="description" content="A premium, privacy-first suite of zero-database, no-login, client-side web tools. Private instant messaging, WebRTC video calling, and instant QR scanner." />
+  <link rel="icon" type="image/png" href="logo-shield.png" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            cream: {
+              50: '#FAF8F5',
+              100: '#F4EFEA',
+              200: '#E9E2D8',
+            },
+            ink: {
+              900: '#0F172A',
+              800: '#1E293B',
+              700: '#334155',
+              600: '#475569',
+              500: '#64748B',
+            },
+            accent: {
+              indigo: '#4F46E5',
+              violet: '#6366F1',
+              emerald: '#10B981',
+              amber: '#D97706',
+              rose: '#E11D48',
+            }
+          },
+          boxShadow: {
+            'card': '4px 4px 0px 0px #0F172A',
+            'card-hover': '6px 6px 0px 0px #0F172A',
+            'card-sm': '2.5px 2.5px 0px 0px #0F172A',
+            'card-pressed': '1.5px 1.5px 0px 0px #0F172A',
+            'glow-indigo': '0 0 40px -10px rgba(99, 102, 241, 0.15)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Warm, tactile, non-generic craft aesthetics */
+    body {
+      background-color: #FAF8F5;
+      color: #0F172A;
+      background-image: 
+        radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.035) 0px, transparent 55%),
+        radial-gradient(at 85% 85%, rgba(224, 109, 83, 0.035) 0px, transparent 55%);
+      background-attachment: fixed;
+    }
+
+    /* Subtle graph paper grid texture */
+    .bg-fine-grid {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+    }
+
+    /* View transition animation */
+    .view-panel {
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .view-panel.view-hidden {
+      display: none !important;
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-indigo-100 selection:text-indigo-950 bg-fine-grid">
+
+  <!-- ==================== HEADER / NAVBAR ==================== -->
+  <header class="w-full border-b-2 border-slate-900 bg-[#FAF8F5]/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Logo Branding -->
+      <a href="#apps" onclick="navigate('apps', event)" class="flex items-center gap-3.5 group select-none">
+        <div class="w-11 h-11 rounded-2xl border-2 border-slate-900 bg-white p-1.5 shadow-card-sm group-hover:translate-x-0.5 group-hover:translate-y-0.5 group-hover:shadow-none transition-all flex items-center justify-center shrink-0">
+          <img 
+            src="logo-shield.png" 
+            alt="Privo Shield" 
+            class="w-full h-full object-contain"
+          />
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-extrabold text-xl tracking-tight text-slate-900 leading-none">
+              Privo
+            </span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Ephemeral P2P network active"></span>
+          </div>
+          <span class="text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-widest block mt-0.5">
+            Zero-Trace Suite
+          </span>
+        </div>
+      </a>
+
+      <!-- Navigation & Status Indicator -->
+      <div class="flex items-center gap-3 sm:gap-4">
+        
+        <!-- Live Status Pill (Desktop) -->
+        <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-mono font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+          0 DB &bull; Client-Side
+        </div>
+
+        <!-- Navigation Switcher -->
+        <nav class="flex items-center bg-white p-1 rounded-2xl border-2 border-slate-900 shadow-card-sm">
+          <button 
+            id="nav-apps" 
+            onclick="navigate('apps')" 
+            class="px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-slate-900 text-white shadow-sm"
+          >
+            Apps
+          </button>
+          <button 
+            id="nav-about" 
+            onclick="navigate('about')" 
+            class="px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all"
+          >
+            About
+          </button>
+        </nav>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTAINER ==================== -->
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-8 py-10 sm:py-16">
+
+    <!-- ======================================================== -->
+    <!-- VIEW 1: HERO & APPS PORTAL (HOME)                       -->
+    <!-- ======================================================== -->
+    <div id="view-apps" class="view-panel space-y-12 sm:space-y-16">
+
+      <!-- Hero Section -->
+      <section class="max-w-3xl space-y-5">
+        
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-mono font-semibold tracking-wide">
+          <svg class="w-3.5 h-3.5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+          </svg>
+          Zero Storage &bull; Ephemeral Sessions &bull; 100% Sovereign
+        </div>
+
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.12]">
+          Zero-Trace <br class="hidden sm:inline" />
+          <span class="relative inline-block text-indigo-600">
+            Web Utilities
+            <span class="absolute left-0 bottom-1 w-full h-3 bg-indigo-100 -z-10 rounded-sm"></span>
+          </span>
+          for everyone.
+        </h1>
+
+        <p class="text-slate-600 text-lg sm:text-xl leading-relaxed font-normal max-w-2xl">
+          A suite of lightweight, human-crafted tools designed with absolute respect for your privacy. 
+          Everything runs entirely in your browser with <strong class="text-slate-900 font-semibold">zero database storage</strong>, 
+          <strong class="text-slate-900 font-semibold">no account sign-up</strong>, and <strong class="text-slate-900 font-semibold">immediate memory wipe</strong> upon closing.
+        </p>
+
+        <!-- Feature Pills -->
+        <div class="flex flex-wrap gap-2.5 pt-1 text-xs font-mono text-slate-600">
+          <span class="px-3 py-1 bg-white border border-slate-300 rounded-lg shadow-sm">⚡ Pure Client-Side</span>
+          <span class="px-3 py-1 bg-white border border-slate-300 rounded-lg shadow-sm">🔒 E2E Encrypted P2P</span>
+          <span class="px-3 py-1 bg-white border border-slate-300 rounded-lg shadow-sm">🗑️ Auto-Purge on Exit</span>
+          <span class="px-3 py-1 bg-white border border-slate-300 rounded-lg shadow-sm">🚫 No Identity Logs</span>
+        </div>
+
+      </section>
+
+      <!-- Apps Grid (4 Cards with Neo-Brutalist Elegance) -->
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+
+        <!-- Card 1: Private Group Messenger -->
+        <article class="group bg-white rounded-3xl p-7 sm:p-8 border-2 border-slate-900 shadow-card hover:shadow-card-hover hover:-translate-y-1 hover:-translate-x-1 transition-all duration-200 flex flex-col justify-between relative overflow-hidden">
+          <div class="space-y-4">
+            
+            <div class="flex items-center justify-between">
+              <!-- Visual Icon Badge -->
+              <div class="w-13 h-13 p-3.5 rounded-2xl bg-indigo-50 border-2 border-slate-900 text-indigo-600 shadow-card-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <span class="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                Multi-Party Room
+              </span>
+            </div>
+
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                Private Group Messenger
+              </h2>
+              <p class="text-slate-600 text-sm sm:text-base leading-relaxed mt-2.5">
+                Enjoy private, group instant messaging with no login required. Simply enter a 6-digit room code to connect. Powered by end-to-end encryption and zero database storage, your conversations are never recorded and are automatically deleted the moment you leave.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-6 mt-6 border-t-2 border-dashed border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <a 
+              href="https://chatling-era-upg.vercel.app" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-sm text-white bg-slate-900 border-2 border-slate-900 shadow-card-sm hover:bg-indigo-600 hover:shadow-card-pressed active:translate-y-0.5 transition-all group/btn"
+            >
+              <span>Launch Group Chat</span>
+              <span class="text-base group-hover/btn:translate-x-1 transition-transform">→</span>
+            </a>
+            <a 
+              href="https://github.com/Radhey-Bhadja/chatling-upg" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="px-4 py-3.5 rounded-xl font-mono text-xs font-bold text-slate-700 hover:text-slate-950 bg-[#FAF8F5] border-2 border-slate-300 hover:border-slate-900 transition-all text-center flex items-center justify-center gap-1.5"
+            >
+              <span>Source</span>
+              <span class="text-xs">↗</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 2: Private 1-on-1 Messenger -->
+        <article class="group bg-white rounded-3xl p-7 sm:p-8 border-2 border-slate-900 shadow-card hover:shadow-card-hover hover:-translate-y-1 hover:-translate-x-1 transition-all duration-200 flex flex-col justify-between relative overflow-hidden">
+          <div class="space-y-4">
+            
+            <div class="flex items-center justify-between">
+              <!-- Visual Icon Badge -->
+              <div class="w-13 h-13 p-3.5 rounded-2xl bg-amber-50 border-2 border-slate-900 text-amber-600 shadow-card-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <span class="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                Direct Peer
+              </span>
+            </div>
+
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
+                Private 1-on-1 Messenger
+              </h2>
+              <p class="text-slate-600 text-sm sm:text-base leading-relaxed mt-2.5">
+                Enjoy private, one-on-one instant messaging with no login required. Simply enter a 6-digit room code to connect. Powered by end-to-end encryption and zero database storage, your conversations are never recorded and are automatically deleted the moment you leave.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-6 mt-6 border-t-2 border-dashed border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <a 
+              href="https://chatling-era.vercel.app" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-sm text-white bg-slate-900 border-2 border-slate-900 shadow-card-sm hover:bg-slate-800 hover:shadow-card-pressed active:translate-y-0.5 transition-all group/btn"
+            >
+              <span>Launch 1-on-1 Chat</span>
+              <span class="text-base group-hover/btn:translate-x-1 transition-transform">→</span>
+            </a>
+            <a 
+              href="https://github.com/Radhey-Bhadja/chatling" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="px-4 py-3.5 rounded-xl font-mono text-xs font-bold text-slate-700 hover:text-slate-950 bg-[#FAF8F5] border-2 border-slate-300 hover:border-slate-900 transition-all text-center flex items-center justify-center gap-1.5"
+            >
+              <span>Source</span>
+              <span class="text-xs">↗</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 3: Secure Group Video Calling -->
+        <article class="group bg-white rounded-3xl p-7 sm:p-8 border-2 border-slate-900 shadow-card hover:shadow-card-hover hover:-translate-y-1 hover:-translate-x-1 transition-all duration-200 flex flex-col justify-between relative overflow-hidden">
+          <div class="space-y-4">
+            
+            <div class="flex items-center justify-between">
+              <!-- Visual Icon Badge -->
+              <div class="w-13 h-13 p-3.5 rounded-2xl bg-rose-50 border-2 border-slate-900 text-rose-600 shadow-card-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <span class="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                WebRTC Video
+              </span>
+            </div>
+
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-rose-600 transition-colors">
+                Secure Group Video Calling
+              </h2>
+              <p class="text-slate-600 text-sm sm:text-base leading-relaxed mt-2.5">
+                Lightning-fast, secure group video calling web app that requires no login, no registration, and no database. Built with WebRTC, it lets you create or join a private video room instantly via a simple link, supporting multi-party peer-to-peer calls with complete data privacy.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-6 mt-6 border-t-2 border-dashed border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <a 
+              href="https://ghost-call-vc.vercel.app" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-sm text-white bg-slate-900 border-2 border-slate-900 shadow-card-sm hover:bg-rose-600 hover:border-slate-900 hover:shadow-card-pressed active:translate-y-0.5 transition-all group/btn"
+            >
+              <span>Start Video Call</span>
+              <span class="text-base group-hover/btn:translate-x-1 transition-transform">→</span>
+            </a>
+            <a 
+              href="https://github.com/Radhey-Bhadja/GhostCall" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="px-4 py-3.5 rounded-xl font-mono text-xs font-bold text-slate-700 hover:text-slate-950 bg-[#FAF8F5] border-2 border-slate-300 hover:border-slate-900 transition-all text-center flex items-center justify-center gap-1.5"
+            >
+              <span>Source</span>
+              <span class="text-xs">↗</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- Card 4: Instant Web QR Scanner -->
+        <article class="group bg-white rounded-3xl p-7 sm:p-8 border-2 border-slate-900 shadow-card hover:shadow-card-hover hover:-translate-y-1 hover:-translate-x-1 transition-all duration-200 flex flex-col justify-between relative overflow-hidden">
+          <div class="space-y-4">
+            
+            <div class="flex items-center justify-between">
+              <!-- Visual Icon Badge -->
+              <div class="w-13 h-13 p-3.5 rounded-2xl bg-emerald-50 border-2 border-slate-900 text-emerald-600 shadow-card-sm">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                </svg>
+              </div>
+              <span class="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                In-Browser Vision
+              </span>
+            </div>
+
+            <div>
+              <h2 class="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
+                Instant Web QR Scanner
+              </h2>
+              <p class="text-slate-600 text-sm sm:text-base leading-relaxed mt-2.5">
+                Instant Web QR Scanner — A privacy-focused, zero-backend online QR reader that instantly decodes QR codes from camera streams or uploaded images directly on your local device.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-6 mt-6 border-t-2 border-dashed border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <a 
+              href="https://qrify-scan-lilac.vercel.app" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-sm text-white bg-slate-900 border-2 border-slate-900 shadow-card-sm hover:bg-emerald-600 hover:border-slate-900 hover:shadow-card-pressed active:translate-y-0.5 transition-all group/btn"
+            >
+              <span>Open QR Scanner</span>
+              <span class="text-base group-hover/btn:translate-x-1 transition-transform">→</span>
+            </a>
+            <a 
+              href="https://github.com/Radhey-Bhadja/QR" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="px-4 py-3.5 rounded-xl font-mono text-xs font-bold text-slate-700 hover:text-slate-950 bg-[#FAF8F5] border-2 border-slate-300 hover:border-slate-900 transition-all text-center flex items-center justify-center gap-1.5"
+            >
+              <span>Source</span>
+              <span class="text-xs">↗</span>
+            </a>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- Trust Bar -->
+      <section class="rounded-3xl border-2 border-slate-900 bg-white p-6 sm:p-8 shadow-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-50 border-2 border-slate-900 flex items-center justify-center text-indigo-700 font-black text-xl shrink-0 shadow-card-sm">
+            🛡️
+          </div>
+          <div>
+            <h3 class="font-extrabold text-slate-900 text-base sm:text-lg">Open Source & Autonomously Hosted</h3>
+            <p class="text-slate-600 text-xs sm:text-sm">Inspect network requests anytime: no telemetry, no surveillance, no server logs.</p>
+          </div>
+        </div>
+        <button onclick="navigate('about')" class="whitespace-nowrap px-4 py-2.5 rounded-xl font-mono text-xs font-bold text-slate-900 bg-white border-2 border-slate-900 shadow-card-sm hover:shadow-card-pressed active:translate-y-0.5 transition-all">
+          Creator Bio & Ethos →
+        </button>
+      </section>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- VIEW 2: ABOUT US (PROFESSIONAL CREATOR CARD)            -->
+    <!-- ======================================================== -->
+    <div id="view-about" class="view-panel view-hidden max-w-xl mx-auto space-y-8">
+
+      <!-- View Title -->
+      <div class="text-center space-y-2">
+        <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          About Privacy Suite
+        </h1>
+        <p class="text-slate-600 text-sm sm:text-base italic">
+          &ldquo;A collection of zero-trace, peer-to-peer web utilities.&rdquo;
+        </p>
+      </div>
+
+      <!-- Main Container Card (Reference Style) -->
+      <div class="bg-white border-2 border-slate-900 rounded-3xl p-7 sm:p-10 shadow-card-hover space-y-7">
+
+        <!-- Centered Profile Element with Emblem -->
+        <div class="flex flex-col items-center justify-center text-center">
+          <div class="relative">
+            <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-slate-900 bg-[#FAF8F5] p-3 shadow-card-sm flex items-center justify-center overflow-hidden">
+              <img 
+                src="logo-shield.png" 
+                alt="Privo Shield" 
+                class="w-full h-full object-contain"
+              />
+            </div>
+            <!-- Online status verified dot -->
+            <span class="absolute bottom-1 right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-slate-900 shadow-sm flex items-center justify-center" title="Developer Active">
+              <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+            </span>
+          </div>
+
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-4">
+            RADHEY BHADJA
+          </h2>
+          <p class="text-xs font-mono font-medium text-slate-500 tracking-wider uppercase mt-1">
+            Software Developer &bull; Privacy Engineer
+          </p>
+        </div>
+
+        <!-- Bio Paragraph -->
+        <div class="text-center max-w-md mx-auto">
+          <p class="text-slate-700 text-sm sm:text-base leading-relaxed">
+            This suite of tools is built with a strict <strong class="text-slate-900 font-semibold">privacy-first philosophy</strong>, 
+            ensuring complete anonymity, no user tracking, and absolute data sovereignty. 
+            All tools operate client-side without storing personal data or records.
+          </p>
+        </div>
+
+        <!-- Subtle Dashed Divider -->
+        <div class="border-t-2 border-dashed border-slate-200"></div>
+
+        <!-- Key Details List -->
+        <div class="space-y-4 text-xs sm:text-sm">
+          
+          <div class="flex items-center justify-between py-1 border-b border-slate-100 pb-2.5">
+            <span class="text-slate-500 font-medium">Curated by</span>
+            <span class="font-extrabold text-slate-900">RADHEY BHADJA</span>
+          </div>
+
+          <div class="flex items-center justify-between py-1 border-b border-slate-100 pb-2.5">
+            <span class="text-slate-500 font-medium">Total Tools</span>
+            <span class="font-bold text-indigo-700 font-mono bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-200">
+              4 Privacy Apps
+            </span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between py-1 border-b border-slate-100 pb-2.5 gap-1 sm:gap-4">
+            <span class="text-stone-500 font-medium shrink-0">Architecture</span>
+            <span class="font-mono text-xs font-bold text-slate-800 text-left sm:text-right bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
+              Client-Side / P2P / Zero Database
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between py-1">
+            <span class="text-slate-500 font-medium">GitHub Profile</span>
+            <a 
+              href="https://github.com/Radhey-Bhadja" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="font-mono font-bold text-slate-900 hover:text-indigo-600 inline-flex items-center gap-1.5 transition-colors underline decoration-2 underline-offset-4 decoration-indigo-300 hover:decoration-indigo-600"
+            >
+              <span>github.com/Radhey-Bhadja</span>
+              <span class="text-sm">↗</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Direct Redirection Button -->
+        <div class="pt-2">
+          <a 
+            href="https://github.com/Radhey-Bhadja" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="w-full py-3.5 rounded-2xl font-bold text-sm text-center text-white bg-slate-900 border-2 border-slate-900 shadow-card-sm hover:bg-indigo-600 hover:shadow-card-pressed active:translate-y-0.5 transition-all flex items-center justify-center gap-2.5 group"
+          >
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+            <span>View All Projects on GitHub</span>
+            <span class="text-base group-hover:translate-x-1 transition-transform">→</span>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="w-full border-t-2 border-slate-900 bg-white py-8 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
+      <div class="flex items-center gap-2.5">
+        <div class="w-5 h-5 rounded-full border-2 border-slate-900 overflow-hidden bg-[#FAF8F5] p-0.5 shrink-0">
+          <img src="logo-shield.png" alt="Privo" class="w-full h-full object-contain" />
+        </div>
+        <span>Privo &bull; Zero Server State &bull; Open Web Standards</span>
+      </div>
+      <div>
+        <span>Handcrafted with precision by <a href="https://github.com/Radhey-Bhadja" target="_blank" rel="noopener noreferrer" class="font-bold text-slate-900 hover:text-indigo-600 transition-colors">Radhey Bhadja</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== LOGIC / SPA ROUTER ==================== -->
+  <script>
+    function navigate(view, event) {
+      if (event) event.preventDefault();
+
+      const viewApps = document.getElementById('view-apps');
+      const viewAbout = document.getElementById('view-about');
+      const navApps = document.getElementById('nav-apps');
+      const navAbout = document.getElementById('nav-about');
+
+      if (view === 'about') {
+        viewApps.classList.add('view-hidden');
+        viewAbout.classList.remove('view-hidden');
+
+        navApps.className = "px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all";
+        navAbout.className = "px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-slate-900 text-white shadow-sm";
+
+        if (window.location.hash !== '#about') {
+          history.pushState(null, '', '#about');
+        }
+      } else {
+        viewAbout.classList.add('view-hidden');
+        viewApps.classList.remove('view-hidden');
+
+        navApps.className = "px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-slate-900 text-white shadow-sm";
+        navAbout.className = "px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all";
+
+        if (window.location.hash !== '#apps' && window.location.hash !== '') {
+          history.pushState(null, '', '#apps');
+        }
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener('popstate', () => {
+      navigate(window.location.hash === '#about' ? 'about' : 'apps');
+    });
+
+    if (window.location.hash === '#about') {
+      navigate('about');
+    }
+  </script>
+</body>
+</html>
