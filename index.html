@@ -56,22 +56,10 @@
   </script>
 
   <style>
-    /* Warm, tactile, non-generic craft aesthetics */
+    /* Warm clean paper aesthetic */
     body {
       background-color: #FAF8F5;
       color: #0F172A;
-      background-image: 
-        radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.035) 0px, transparent 55%),
-        radial-gradient(at 85% 85%, rgba(224, 109, 83, 0.035) 0px, transparent 55%);
-      background-attachment: fixed;
-    }
-
-    /* Subtle graph paper grid texture */
-    .bg-fine-grid {
-      background-size: 32px 32px;
-      background-image: 
-        linear-gradient(to right, rgba(15, 23, 42, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
     }
 
     /* View transition animation */
@@ -85,7 +73,7 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-indigo-100 selection:text-indigo-950 bg-fine-grid">
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-indigo-100 selection:text-indigo-950">
 
   <!-- ==================== HEADER / NAVBAR ==================== -->
   <header class="w-full border-b-2 border-slate-900 bg-[#FAF8F5]/90 backdrop-blur-md sticky top-0 z-50">
@@ -156,13 +144,6 @@
       <!-- Hero Section -->
       <section class="max-w-3xl space-y-5">
         
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-mono font-semibold tracking-wide">
-          <svg class="w-3.5 h-3.5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-          </svg>
-          Zero Storage &bull; Ephemeral Sessions &bull; 100% Sovereign
-        </div>
-
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-[1.12]">
           Zero-Trace <br class="hidden sm:inline" />
           <span class="relative inline-block text-indigo-600">
