@@ -1,6 +1,6 @@
 # Privo — Zero-Trace Web Suite
 
-> A modern, human-crafted, privacy-first portal for zero-database, client-side web tools by [Radhey Bhadja](https://github.com/Radhey-Bhadja).
+> A modern, privacy-first portal for zero-database, client-side web tools by [Radhey Bhadja](https://github.com/Radhey-Bhadja).
 
 ---
 
