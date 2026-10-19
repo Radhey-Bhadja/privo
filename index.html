@@ -101,34 +101,23 @@
         </div>
       </a>
 
-      <!-- Navigation & Status Indicator -->
-      <div class="flex items-center gap-3 sm:gap-4">
-        
-        <!-- Live Status Pill (Desktop) -->
-        <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-mono font-medium">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-          0 DB &bull; Client-Side
-        </div>
-
-        <!-- Navigation Switcher -->
-        <nav class="flex items-center bg-white p-1 rounded-2xl border-2 border-slate-900 shadow-card-sm">
-          <button 
-            id="nav-apps" 
-            onclick="navigate('apps')" 
-            class="px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-slate-900 text-white shadow-sm"
-          >
-            Apps
-          </button>
-          <button 
-            id="nav-about" 
-            onclick="navigate('about')" 
-            class="px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all"
-          >
-            About
-          </button>
-        </nav>
-
-      </div>
+      <!-- Navigation Switcher -->
+      <nav class="flex items-center bg-white p-1 rounded-2xl border-2 border-slate-900 shadow-card-sm">
+        <button 
+          id="nav-apps" 
+          onclick="navigate('apps')" 
+          class="px-4 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all bg-slate-900 text-white shadow-sm"
+        >
+          Apps
+        </button>
+        <button 
+          id="nav-about" 
+          onclick="navigate('about')" 
+          class="px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all"
+        >
+          About
+        </button>
+      </nav>
 
     </div>
   </header>
