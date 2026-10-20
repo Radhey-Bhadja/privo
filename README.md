@@ -19,6 +19,7 @@
 | **Secure Group Video Calling** | WebRTC-powered multi-party audio & video rooms created with a simple link. | [Start Call](https://ghost-call-vc.vercel.app) | [GhostCall](https://github.com/Radhey-Bhadja/GhostCall) |
 | **Instant Web QR Scanner** | Local computer-vision QR code decoder from camera or file uploads. Zero server uploads. | [Open Scanner](https://qrify-scan-lilac.vercel.app) | [QR](https://github.com/Radhey-Bhadja/QR) |
 | **Instant Web Clipboard** | Zero-database, end-to-end ephemeral clipboard for instantly sharing text and code snippets across any device. | [Open Clipboard](https://easy-clipboard-21.vercel.app/) | [syncclip](https://github.com/Radhey-Bhadja/syncclip) |
+| **OmniCast (Remote Desktop)** | Real-time, browser-based remote desktop powered by WebRTC & Node.js for screen viewing, mouse/keyboard control, and file transfer *(Works only on Windows)*. | [Launch OmniCast](https://omni-cast.vercel.app) | [omni-cast](https://github.com/Radhey-Bhadja/omni-cast) |
 
 ---
 
